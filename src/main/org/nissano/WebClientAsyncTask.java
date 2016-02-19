@@ -28,7 +28,7 @@ import android.util.Log;
 
 public class WebClientAsyncTask extends AsyncTask<Proto.Credentials, Void, Boolean> {
 
-  private static int TIMEOUT_MILLIS = 5 * 60 * 1000;  // one minute
+  private static int TIMEOUT_MILLIS = 5 * 60 * 1000;  // five minutes
   private static String CHROME_USER_AGENT =
       "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36";
 
@@ -44,9 +44,9 @@ public class WebClientAsyncTask extends AsyncTask<Proto.Credentials, Void, Boole
   protected Boolean doInBackground(Credentials... credentials) {
     boolean success = false;
     try {
-      success = enableHeat(credentials[0]);
+      success = activateHvac(credentials[0]);
     } catch (IOException e) {
-      Log.e("nissan", e.toString());
+      Log.e("nissano", e.toString());
       extendedStatus = e.getMessage();
       success = false;
     }
@@ -58,7 +58,7 @@ public class WebClientAsyncTask extends AsyncTask<Proto.Credentials, Void, Boole
     viewManager.setStatus(success ? "Success" : "Failed " + extendedStatus);
   }
 
-  private boolean enableHeat(Proto.Credentials credentials) throws IOException {
+  private boolean activateHvac(Proto.Credentials credentials) throws IOException {
     HttpClient httpClient = new HttpClient();
     httpClient.getParams().setParameter(
         HttpMethodParams.USER_AGENT,
@@ -80,7 +80,7 @@ public class WebClientAsyncTask extends AsyncTask<Proto.Credentials, Void, Boole
     httpClient.executeMethod(post);
 
     if (post.getStatusCode() != 200) {
-      extendedStatus = "Activate hvac returned " + post.getStatusCode();
+      extendedStatus = String.format("Activate hvac returned %d.", post.getStatusCode());
       return false;
     }
     String result = post.getResponseBodyAsString();
